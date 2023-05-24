@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "/root/workdir/invaders-from-space-3d/build/CMakePresets.json"
+    ]
+}
