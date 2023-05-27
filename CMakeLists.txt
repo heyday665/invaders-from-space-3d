@@ -4,6 +4,8 @@ set(CXX_STANDARD_REQUIRED 23)
 
 file(GLOB_RECURSE SOURCES source/*.cpp)
 
+find_package(glfw3 REQUIRED CONFIG)
+
 message("${CMAKE_BINARY_DIR}/webgpu")
 add_subdirectory(${CMAKE_BINARY_DIR}/webgpu)
 
