@@ -4,41 +4,25 @@ from conan import ConanFile
 from conan.tools.files import get, replace_in_file
 
 class Link1(ConanFile): 
-    settings = "os", "compiler", "build_type", "arch"
-    generators = "CMakeToolchain", "CMakeDeps"
-    binary_hashes : Dict[str, str] = {
-            "Windows" : "b79f9df1412da1bb23c96ce15b9b8fe1", 
-            "Linux" : "688213060139b26a0a1021bac6b82a17", 
-            "MacOS" : "a892611ebd1e8da2308449bb3c5a7fa2"
-        }
-    binary_trailing : Dict[str, str] = {
-            "Windows" : "windows", 
-            "Linux" : "linux", 
-            "MacOS" : "macos"
-        }
-    binary_url_format_string : str = \
-            "https://eliemichel.github.io/LearnWebGPU/_downloads/{}/wgpu-native-for-{}.zip"
-
+    settings : Tuple[str, str] = "os", "compiler", "build_type", "arch"
+    generators : Tuple[str, str] = "CMakeToolchain", "CMakeDeps"
+    latest_web_gpu_url : str = "https://github.com/eliemichel/WebGPU-distribution/archive/refs/heads/wgpu.zip"
+    latest_glfw_web_gpu_url : str = "https://github.com/eliemichel/glfw3webgpu/archive/refs/heads/main.zip"
     def generate(self): 
         os : str = str(self.settings.os)
-        get(
-                self, 
-                Link1.binary_url_format_string.format(
-                        Link1.binary_hashes[os], 
-                        Link1.binary_trailing[os]
-                    )
-            )
-        webgpu_cmake_path = Path(self.build_folder) / "webgpu" / "CMakeLists.txt"
-        print("Patching WebGPU CMakeLists.txt")
-        replace_in_file(self, webgpu_cmake_path, "PARENT_SCOPE", "")
-        replace_in_file(
-                self, 
-                webgpu_cmake_path, 
-                'INTERFACE_INCLUDE_DIRECTORIES "${WGPU}"', 
-                'INTERFACE_INCLUDE_DIRECTORIES "${WGPU}/.."'
-            )
+        get(self, Link1.latest_web_gpu_url)
+        get(self, Link1.latest_glfw_web_gpu_url)
+        webgpu_cmake_path : Path = Path(self.build_folder) / "WebGPU-distribution-wgpu" / "CMakeLists.txt"
+        glfw3_webgpu_cmake_path : Path = Path(self.build_folder) / "glfw3webgpu-main" / "CMakeLists.txt"
+        #print("Patching WebGPU CMakeLists.txt")
+        #replace_in_file(self, webgpu_cmake_path, "PARENT_SCOPE", "")
+        #replace_in_file(
+        #        self, 
+        #        webgpu_cmake_path, 
+        #        'INTERFACE_INCLUDE_DIRECTORIES "${WGPU}"', 
+        #        'INTERFACE_INCLUDE_DIRECTORIES "${WGPU}/.."'
+        #    )
 
 
     def requirements(self): 
         self.requires("glfw/3.3.8")
-
